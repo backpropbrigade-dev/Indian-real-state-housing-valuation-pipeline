@@ -1,0 +1,43 @@
+import streamlit as st
+import pandas as pd
+import joblib
+import numpy as np
+
+st.set_page_config(page_title="India Property Valuation Engine", page_icon="🏢", layout="centered")
+st.title("🏢 Indian Residential Property Valuation Engine")
+st.markdown("### Production-Grade MLOps Capstone Project")
+
+@st.cache_resource
+def load_pipeline():
+    return joblib.load("india_housing_production_pipeline.joblib")
+
+try:
+    pipeline = load_pipeline()
+    st.success("🤖 Optimized Model Pipeline loaded into memory successfully.")
+except Exception as e:
+    st.error("⚠️ Model file missing. Place 'india_housing_production_pipeline.joblib' in this folder.")
+    st.stop()
+
+# Form Input Layout
+bhk = st.number_input("BHK Configuration", min_value=1, max_value=10, value=3)
+sqft = st.number_input("Total Space Area (Square Feet)", min_value=150, max_value=100000, value=1500)
+year_built = st.number_input("Year Built", min_value=1950, max_value=2026, value=2020)
+prop_type = st.selectbox("Property Type", ["Flat", "Independent House", "Villa", "Penthouse", "Apartment"])
+state = st.text_input("State", value="Maharashtra")
+city = st.text_input("City", value="Mumbai")
+locality = st.text_input("Locality", value="Andheri West")
+
+if st.button("Calculate Market Valuation", type="primary"):
+    payload = {
+        'BHK': int(bhk), 'Size_in_SqFt': float(sqft), 'Year_Built': int(year_built),
+        'Property_Type': prop_type, 'States': state, 'City': city, 'Locality': locality
+    }
+    input_df = pd.DataFrame([payload])
+    
+    # Run identical feature engineering steps inline
+    input_df['sqft_per_bhk'] = input_df['Size_in_SqFt'] / input_df['BHK']
+    input_df['spatial_density_interaction'] = input_df['BHK'] * input_df['Size_in_SqFt']
+    
+    predicted_price = pipeline.predict(input_df)[0]
+    st.markdown("---")
+    st.metric(label="Estimated Market Value", value=f"₹{predicted_price:,.2f} Lakhs")
