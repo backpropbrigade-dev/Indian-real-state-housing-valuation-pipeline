@@ -101,3 +101,22 @@ $$\mathbf{W}_{t+1} = \mathbf{W}_t - \frac{\eta}{\sqrt{\hat{v}_t} + \epsilon} \ha
 
 ---
 
+## 🚀 How to Run the Project Locally
+
+### Install System Dependencies
+Clone this repository to your laptop and open your terminal. Run the following command to download the precise package layers required:
+
+### 1.Initialize an Isolated Environment Space
+# On Windows:
+python -m venv mn_env
+mn_env\Scripts\activate
+
+# On macOS / Linux:
+python3 -m venv mn_env
+source mn_env/bin/activate
+
+### 2.Ingest the Code Libraries
+pip install -r requirements.txt
+
+### 3.Launch Your Dashboard Prototype Globally
+Launch Your Dashboard Prototype Globally
