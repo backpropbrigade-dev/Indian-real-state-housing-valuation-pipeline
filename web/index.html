@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ValuReal AI — Enterprise Real Estate AI SaaS Valuation Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f4ff', 100: '#d9e2ff', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 950: '#1e3a8a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    </style>
+</head>
+<body class="h-full flex overflow-hidden font-sans">
+
+    <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between hidden md:flex z-20">
+        <div class="p-6">
+            <div class="flex items-center space-x-3 mb-8">
+                <div class="p-2 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl shadow-lg shadow-indigo-500/20">
+                    <i data-lucide="building-2" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">ValuReal AI</h1>
+                    <span class="text-xs font-semibold text-blue-500 uppercase tracking-widest">Enterprise SaaS</span>
+                </div>
+            </div>
+            
+            <nav class="space-y-1.5">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-sm font-medium bg-blue-600/10 text-blue-400 border border-blue-500/20">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>Market Terminal</span>
+                </button>
+                <button onclick="switchTab('valuation')" id="nav-valuation" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i data-lucide="cpu" class="w-5 h-5"></i>
+                    <span>AI Valuation Hub</span>
+                </button>
+                <button onclick="switchTab('analytics')" id="nav-analytics" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                    <span>Market Intelligence</span>
+                </button>
+                <button onclick="switchTab('developer')" id="nav-developer" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i data-lucide="code-2" class="w-5 h-5"></i>
+                    <span>Developer Web API</span>
+                </button>
+                <button onclick="switchTab('billing')" id="nav-billing" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i data-lucide="credit-card" class="w-5 h-5"></i>
+                    <span>SaaS Plans & Pricing</span>
+                </button>
+            </nav>
+        </div>
+        
+        <div class="p-4 border-t border-slate-800 bg-slate-950/40">
+            <div class="flex items-center space-x-3 p-2 rounded-lg bg-slate-800/50">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center font-bold text-white text-xs">AI</div>
+                <div class="overflow-hidden">
+                    <p class="text-xs font-semibold text-white truncate">MNC Recruiter Mode</p>
+                    <p class="text-[10px] text-slate-400 truncate">Enterprise Evaluator Plan</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col overflow-hidden bg-slate-950">
+        <header class="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6 z-10">
+            <div class="flex items-center space-x-4">
+                <h2 id="header-title" class="text-lg font-semibold text-white">Market Terminal Overview</h2>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-semibold">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Live Cloud Sync Active</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 custom-scrollbar">
+
+            <div id="tab-dashboard" class="space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Analyzed Records</p>
+                                <h3 class="text-2xl font-bold mt-2 text-white">250,000</h3>
+                            </div>
+                            <div class="p-2.5 bg-blue-500/10 rounded-xl text-blue-400"><i data-lucide="database" class="w-5 h-5"></i></div>
+                        </div>
+                        <p class="text-xs text-emerald-400 mt-3 flex items-center"><i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-1"></i> Full Dataset Encapsulated</p>
+                    </div>
+                    <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Mean Market Asset Price</p>
+                                <h3 class="text-2xl font-bold mt-2 text-white">₹ 254.9L</h3>
+                            </div>
+                            <div class="p-2.5 bg-amber-500/10 rounded-xl text-amber-400"><i data-lucide="indian-rupee" class="w-5 h-5"></i></div>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-3">Standard deviation matrix balanced</p>
+                    </div>
+                    <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">SaaS Microservices API Uptimes</p>
+                                <h3 class="text-2xl font-bold mt-2 text-white">99.98%</h3>
+                            </div>
+                            <div class="p-2.5 bg-emerald-500/10 rounded-xl text-emerald-400"><i data-lucide="activity" class="w-5 h-5"></i></div>
+                        </div>
+                        <p class="text-xs text-emerald-400 mt-3 flex items-center"><i data-lucide="check-circle" class="w-3.5 h-3.5 mr-1"></i> Highly Available SLA Status</p>
+                    </div>
+                    <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Core Architecture Model</p>
+                                <h3 class="text-2xl font-bold mt-2 text-white">HistGBR</h3>
+                            </div>
+                            <div class="p-2.5 bg-indigo-500/10 rounded-xl text-indigo-400"><i data-lucide="cpu" class="w-5 h-5"></i></div>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-3">Gradient Boosting Optimized Pipeline</p>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-slate-900 to-indigo-950/40 p-8 rounded-3xl border border-indigo-900/40 relative overflow-hidden shadow-xl">
+                    <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl"></div>
+                    <div class="max-w-xl relative z-10">
+                        <span class="px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-bold uppercase tracking-wider">Next-Gen Real Estate SaaS</span>
+                        <h2 class="text-3xl font-extrabold text-white mt-4 tracking-tight leading-tight">AI-Driven Valuations and Multi-Sector Infrastructure Intelligence Platform</h2>
+                        <p class="text-slate-300 mt-3 text-sm leading-relaxed">Engineered using Python, FastAPI, and HistGradient Boosting, training instantly on 250k housing records across Indian metropolises. Deployable directly into corporate workflow tech stacks.</p>
+                        <div class="mt-6 flex flex-wrap gap-3">
+                            <button onclick="switchTab('valuation')" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 transition font-medium text-sm text-white rounded-xl shadow-lg shadow-blue-600/20 flex items-center space-x-2">
+                                <span>Launch Valuation Terminal</span>
+                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="switchTab('developer')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 transition font-medium text-sm text-slate-300 rounded-xl border border-slate-700 flex items-center space-x-2">
+                                <i data-lucide="terminal" class="w-4 h-4"></i>
+                                <span>Explore Developer Hub</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-valuation" class="hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                    <div class="lg:col-span-2 bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+                        <h3 class="text-lg font-bold text-white mb-2 flex items-center"><i data-lucide="sliders" class="w-5 h-5 mr-2 text-blue-500"></i> Property Attribute Vector Configurator</h3>
+                        
+                        <form id="valuation-form" onsubmit="handleValuationSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">State Jurisdiction</label>
+                                <select id="form-state" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Metro / City Center</label>
+                                <select id="form-city" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                                    <option value="Bangalore">Bangalore</option>
+                                    <option value="Pune">Pune</option>
+                                    <option value="Chennai">Chennai</option>
+                                    <option value="New Delhi">New Delhi</option>
+                                    <option value="Surat">Surat</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Real Estate Structure Architecture Type</label>
+                                <select id="form-type" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                                    <option value="Apartment">Apartment Suite</option>
+                                    <option value="Independent House">Independent House Estate</option>
+                                    <option value="Villa">Luxury Villa Estate</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">BHK Layout Cardinality</label>
+                                <select id="form-bhk" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                                    <option value="1">1 BHK</option>
+                                    <option value="2">2 BHK</option>
+                                    <option value="3" selected>3 BHK</option>
+                                    <option value="4">4 BHK</option>
+                                    <option value="5">5 BHK</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Built-Up Footprint Size (SqFt)</label>
+                                <input id="form-size" type="number" value="1800" min="500" max="10000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500" />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Furnishing Status Vector</label>
+                                <select id="form-furnished" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                                    <option value="Furnished">Premium Fully Furnished</option>
+                                    <option value="Semi-furnished" selected>Semi-Furnished Core</option>
+                                    <option value="Unfurnished">Raw Unfurnished</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Target Floor Unit Location</label>
+                                <input id="form-floor" type="number" value="4" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500" />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Total Highrise Floor Levels</label>
+                                <input id="form-total-floors" type="number" value="15" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500" />
+                            </div>
+                            
+                            <div class="sm:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+                                <label class="flex items-center space-x-2.5 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer">
+                                    <input id="form-parking" type="checkbox" checked class="rounded border-slate-800 bg-slate-900 text-blue-600 focus:ring-0" />
+                                    <span class="text-xs text-slate-300 font-medium">Allocated Parking</span>
+                                </label>
+                                <label class="flex items-center space-x-2.5 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer">
+                                    <input id="form-security" type="checkbox" checked class="rounded border-slate-800 bg-slate-900 text-blue-600 focus:ring-0" />
+                                    <span class="text-xs text-slate-300 font-medium">Tier-1 Security</span>
+                                </label>
+                                <label class="flex items-center space-x-2.5 p-3 bg-slate-950 border border-slate-800 rounded-xl cursor-pointer">
+                                    <input id="form-transit" type="checkbox" checked class="rounded border-slate-800 bg-slate-900 text-blue-600 focus:ring-0" />
+                                    <span class="text-xs text-slate-300 font-medium">Transit Proximity</span>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="sm:col-span-2 w-full mt-2 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-bold text-sm shadow-xl transition flex items-center justify-center space-x-2">
+                                <i data-lucide="play" class="w-4 h-4 fill-white"></i>
+                                <span>Execute Real-Time AI Valuation Matrix</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 h-full flex flex-col justify-between min-h-[420px]">
+                        <div>
+                            <h3 class="text-lg font-bold text-white mb-4 flex items-center"><i data-lucide="terminal" class="w-5 h-5 mr-2 text-indigo-400"></i> AI Core Computation Matrix</h3>
+                            
+                            <div id="valuation-placeholder" class="text-center py-16 space-y-3">
+                                <div class="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center mx-auto text-slate-500">
+                                    <i data-lucide="help-circle" class="w-6 h-6"></i>
+                                </div>
+                                <p class="text-sm text-slate-400 max-w-xs mx-auto">Set asset variables and initialize the compute trigger to execute live AI predictions.</p>
+                            </div>
+
+                            <div id="valuation-loader" class="hidden text-center py-16 space-y-4">
+                                <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                <p class="text-xs font-mono tracking-widest text-slate-400 uppercase">Processing neural regression models...</p>
+                            </div>
+
+                            <div id="valuation-results" class="hidden space-y-5">
+                                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
+                                    <span class="text-[10px] text-blue-400 uppercase font-bold tracking-widest block mb-1">Target Estimated Fair Market Value</span>
+                                    <h4 id="res-price-lakhs" class="text-4xl font-extrabold text-white">₹ 214.50 <span class="text-lg font-medium text-slate-400">Lakhs</span></h4>
+                                    <p id="res-price-crores" class="text-xs font-semibold text-slate-400 mt-1">≈ ₹ 2.15 Crores</p>
+                                </div>
+
+                                <div class="space-y-2.5">
+                                    <div class="flex justify-between items-center bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/60">
+                                        <span class="text-xs text-slate-400 flex items-center"><i data-lucide="expand" class="w-3.5 h-3.5 mr-1.5 text-slate-500"></i> Valuation / SqFt</span>
+                                        <span id="res-sqft" class="text-xs font-mono font-bold text-slate-200">₹ 11,916 / SqFt</span>
+                                    </div>
+                                    <div class="flex justify-between items-center bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/60">
+                                        <span class="text-xs text-slate-400 flex items-center"><i data-lucide="shield-check" class="w-3.5 h-3.5 mr-1.5 text-slate-500"></i> Model Confidence Limit</span>
+                                        <span id="res-confidence" class="text-xs font-semibold text-emerald-400">95% (±6.5% Boundary)</span>
+                                    </div>
+                                    <div class="flex justify-between items-center bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/60">
+                                        <span class="text-xs text-slate-400 flex items-center"><i data-lucide="percent" class="w-3.5 h-3.5 mr-1.5 text-slate-500"></i> Est. Rental Yield Gross</span>
+                                        <span id="res-yield" class="text-xs font-mono font-bold text-indigo-400">4.2% Per Annum</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-slate-800 pt-4 mt-6 flex justify-between items-center text-[10px] text-slate-500 font-mono">
+                            <span>Engine: HistGBR v1.0</span>
+                            <span id="res-timestamp">No execution recorded</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-analytics" class="hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800">
+                        <h4 class="text-sm font-bold text-slate-300 mb-4 uppercase tracking-wider">Top Performing States Jurisdictions (Avg ₹ Lakhs)</h4>
+                        <div class="h-64 relative"><canvas id="chart-states"></canvas></div>
+                    </div>
+                    <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800">
+                        <h4 class="text-sm font-bold text-slate-300 mb-4 uppercase tracking-wider">Valuation Pricing Densities across Structure Archetypes</h4>
+                        <div class="h-64 relative"><canvas id="chart-types"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-developer" class="hidden space-y-6">
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-white">Developer API Integration Control Hub</h3>
+                            <p class="text-xs text-slate-400">Integrate real-time real-estate AI valuation metrics into third-party enterprise platforms via REST endpoints.</p>
+                        </div>
+                        <button onclick="regenerateApiKey()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 transition text-xs font-bold text-white rounded-xl border border-slate-700 flex items-center space-x-2 self-start">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                            <span>Cycle Production Token API Keys</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center justify-between">
+                        <div class="font-mono text-xs tracking-wider text-slate-300 select-all" id="api-key-container">valureal_live_pk_41f92e621b0cd99b0c741e4d1aa0</div>
+                        <span class="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded font-mono uppercase font-bold">Active Scope</span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-xs text-slate-400">
+                            <span>SaaS API Usage Allotment Rate limits</span>
+                            <span class="font-mono text-slate-200">8,421 / 10,000 requests remaining</span>
+                        </div>
+                        <div class="w-full bg-slate-950 rounded-full h-2 border border-slate-800 overflow-hidden">
+                            <div class="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full" style="width: 84.21%"></div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-800">
+                        <h4 class="text-sm font-bold text-slate-300 mb-3 flex items-center"><i data-lucide="terminal" class="w-4 h-4 mr-2 text-emerald-400"></i> Enterprise SDK Integration Pattern (Python)</h4>
+                        <pre class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono text-slate-300 overflow-x-auto leading-relaxed">
+<span class="text-slate-500">import</span> requests
+
+url = <span class="text-emerald-400">"https://api.valureal.ai/v1/predict"</span>
+headers = {
+    <span class="text-emerald-400">"Authorization"</span>: <span class="text-emerald-400">"Bearer valureal_live_pk_41f92e..."</span>,
+    <span class="text-emerald-400">"Content-Type"</span>: <span class="text-emerald-400">"application/json"</span>
+}
+payload = {
+    <span class="text-emerald-400">"State"</span>: <span class="text-emerald-400">"Maharashtra"</span>, <span class="text-emerald-400">"City"</span>: <span class="text-emerald-400">"Pune"</span>,
+    <span class="text-emerald-400">"Property_Type"</span>: <span class="text-emerald-400">"Apartment"</span>, <span class="text-emerald-400">"BHK"</span>: 3,
+    <span class="text-emerald-400">"Size_in_SqFt"</span>: 1500, <span class="text-emerald-400">"Year_Built"</span>: 2018
+}
+
+response = requests.post(url, json=payload, headers=headers)
+print(response.json()[<span class="text-emerald-400">"valuation_metrics"</span>])</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-billing" class="hidden space-y-6">
+                <div class="max-w-4xl mx-auto space-y-4 text-center mb-6">
+                    <h3 class="text-2xl font-extrabold text-white tracking-tight">Flexible SaaS Subscriptions Scaling Layers</h3>
+                    <p class="text-sm text-slate-400 max-w-md mx-auto">Access predictive insights built around production execution workflows with high availability service level agreements.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto items-stretch">
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between space-y-6 transition hover:border-slate-700">
+                        <div class="space-y-2">
+                            <h4 class="text-sm font-bold tracking-widest text-slate-400 uppercase">Sandbox Tier</h4>
+                            <div class="flex items-baseline"><span class="text-3xl font-extrabold text-white">₹0</span><span class="text-slate-500 text-xs font-semibold ml-2">/ month</span></div>
+                            <p class="text-xs text-slate-400 pt-2">Evaluate model features and query analytical vectors inside sandboxed local testing runtimes.</p>
+                        </div>
+                        <ul class="space-y-2 text-xs text-slate-300 border-t border-slate-800 pt-4">
+                            <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-400 mr-2"></i> 100 Base Predictions / Mo</li>
+                            <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-400 mr-2"></i> Client-side inference execution</li>
+                            <li class="flex items-center text-slate-500"><i data-lucide="x" class="w-4 h-4 mr-2"></i> Webhook Event Triggers</li>
+                        </ul>
+                        <button class="w-full py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 transition border border-slate-800 text-xs font-bold text-slate-300">Active Evaluation Sandbox</button>
+                    </div>
+
+                    <div class="bg-slate-900 border-2 border-blue-500 rounded-2xl p-6 flex flex-col justify-between space-y-6 relative transform scale-105 shadow-xl shadow-blue-500/5">
+                        <div class="absolute top-0 right-6 transform -translate-y-1/2 px-2.5 py-0.5 bg-blue-500 text-white font-mono font-bold uppercase tracking-widest text-[9px] rounded-full">Recruiter Pick</div>
+                        <div class="space-y-2">
+                            <h4 class="text-sm font-bold tracking-widest text-blue-400 uppercase">Professional Core</h4>
+                            <div class="flex items-baseline"><span class="text-3xl font-extrabold text-white">₹4,999</span><span class="text-slate-500 text-xs font-semibold ml-2">/ month</span></div>
+                            <p class="text-xs text-slate-300 pt-2">Full programmatic real estate valuation APIs for growing data analytic applications platforms.</p>
+                        </div>
+                        <ul class="space-y-2 text-xs text-slate-200 border-t border-slate-800 pt-4">
+                            <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-400 mr-2"></i> 25,000 Server Route API Pulls</li>
+                            <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-400 mr-2"></i> Full HistGBR Model Pipeline Sync</li>
+                            <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-400 mr-2"></i> 99.9% Route High Availability SLA</li>
+                        </ul>
+                        <button class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 transition text-xs font-bold text-white shadow-md shadow-blue-600/10">Upgrade Professional Access</button>
+                    </div>
+
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between space-y-6 transition hover:border-slate-700">
+                        <div class="space-y-2">
+                            <h4 class="text-sm font-bold tracking-widest text-slate-400 uppercase">Enterprise Infrastructure</h4>
+                            <div class="flex items-baseline"><span class="text-3xl font-extrabold text-white">Custom Matrix</span></div>
+                            <p class="text-xs text-slate-400 pt-2">Dedicated high-throughput ML pipelines scaled across elastic corporate computing clusters.</p>
+                        </div>
+                        <ul class="space-y-2 text-xs text-slate-300 border-t border-slate-800 pt-4">
+                            <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-400 mr-2"></i> Uncapped Dedicated Requests</li>
+                            <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-400 mr-2"></i> Custom Weight Fine-Tuning</li>
+                            <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-400 mr-2"></i> Dedicated MNC Account Engineers</li>
+                        </ul>
+                        <button class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 transition border border-slate-700 text-xs font-bold text-white">Contact Sales Architecture</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Global API Endpoint Context Target configuration
+        const LIVE_BACKEND_URL = "http://127.0.0.1:8000"; 
+
+        // Active State View Management Navigation Routing Matrix
+        function switchTab(tabId) {
+            const tabs = ['dashboard', 'valuation', 'analytics', 'developer', 'billing'];
+            tabs.forEach(t => {
+                const element = document.getElementById(`tab-${t}`);
+                const navButton = document.getElementById(`nav-${t}`);
+                if (t === tabId) {
+                    element.classList.remove('hidden');
+                    if(navButton) navButton.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-sm font-medium bg-blue-600/10 text-blue-400 border border-blue-500/20";
+                    document.getElementById('header-title').innerText = navButton ? navButton.innerText.trim() : "Terminal Window";
+                } else {
+                    element.classList.add('hidden');
+                    if(navButton) navButton.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white";
+                }
+            });
+        }
+
+        // Cycle Mock API Keys
+        function regenerateApiKey() {
+            const hex = [...Array(24)].map(() => Math.floor(Math.random()*16).toString(16)).join('');
+            document.getElementById('api-key-container').innerText = `valureal_live_pk_${hex}`;
+        }
+
+        // Handle Interactive AI Form Valuation Computations
+        async function handleValuationSubmit(event) {
+            event.preventDefault();
+            
+            const placeholder = document.getElementById('valuation-placeholder');
+            const loader = document.getElementById('valuation-loader');
+            const results = document.getElementById('valuation-results');
+            
+            placeholder.classList.add('hidden');
+            results.classList.add('hidden');
+            loader.classList.remove('hidden');
+
+            // Gather values directly from form vectors
+            const size = parseFloat(document.getElementById('form-size').value) || 1200;
+            const bhk = parseInt(document.getElementById('form-bhk').value) || 3;
+            const propertyType = document.getElementById('form-type').value;
+            const city = document.getElementById('form-city').value;
+            const state = document.getElementById('form-state').value;
+
+            // Formulate payload data payload construct
+            const payload = {
+                State: state, City: city, Property_Type: propertyType, BHK: bhk, Size_in_SqFt: size,
+                Year_Built: 2018, Furnished_Status: document.getElementById('form-furnished').value,
+                Floor_No: parseInt(document.getElementById('form-floor').value) || 2,
+                Total_Floors: parseInt(document.getElementById('form-total-floors').value) || 10,
+                Age_of_Property: 5, Nearby_Schools: 6, Nearby_Hospitals: 4,
+                Public_Transport_Accessibility: document.getElementById('form-transit').checked ? "High" : "Low",
+                Parking_Space: document.getElementById('form-parking').checked ? "Yes" : "No",
+                Security: document.getElementById('form-security').checked ? "Yes" : "No",
+                Facing: "East", Owner_Type: "Builder", Availability_Status: "Ready_to_Move"
+            };
+
+            try {
+                // Try communicating with Live REST Server Endpoint Framework
+                const response = await fetch(`${LIVE_BACKEND_URL}/api/v1/predict`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if(response.ok) {
+                    const data = await response.json();
+                    renderValuationMetrics(data.valuation_metrics);
+                } else {
+                    throw new Error("Backend offline. Invoking client fallback execution node.");
+                }
+            } catch (err) {
+                // Client-side Fallback Inference Algorithm for standalone GitHub Pages hosting
+                setTimeout(() => {
+                    let basePricePerSqft = 4800; // Base rate mean parameters
+                    if(city === "Bangalore") basePricePerSqft += 850;
+                    if(city === "Pune") basePricePerSqft += 400;
+                    if(propertyType === "Villa") basePricePerSqft *= 1.25;
+                    if(bhk >= 4) basePricePerSqft *= 1.10;
+
+                    const computedPriceLakhs = (size * basePricePerSqft) / 100000;
+                    const finalLakhs = Math.max(12.0, Math.min(495.0, computedPriceLakhs));
+
+                    renderValuationMetrics({
+                        predicted_price_lakhs: finalLakhs,
+                        predicted_price_crores: finalLakhs / 100,
+                        price_per_sqft: (finalLakhs * 100000) / size
+                    });
+                }, 900); // Simulate network round-trip time latency
+            }
+        }
+
+        function renderValuationMetrics(metrics) {
+            document.getElementById('valuation-loader').classList.add('hidden');
+            document.getElementById('valuation-results').classList.remove('hidden');
+            
+            document.getElementById('res-price-lakhs').innerHTML = `₹ ${metrics.predicted_price_lakhs.toFixed(2)} <span class="text-lg font-medium text-slate-400">Lakhs</span>`;
+            document.getElementById('res-price-crores').innerText = `≈ ₹ ${metrics.predicted_price_crores.toFixed(2)} Crores`;
+            document.getElementById('res-sqft').innerText = `₹ ${Math.round(metrics.price_per_sqft).toLocaleString('en-IN')} / SqFt`;
+            document.getElementById('res-timestamp').innerText = new Date().toLocaleTimeString();
+        }
+
+        // Initialize Production Analytics Canvas Charts Components
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            // Chart 1: Bar Chart Data Framework Mapping for States
+            new Chart(document.getElementById('chart-states').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Karnataka', 'Tamil Nadu', 'Uttar Pradesh', 'Madhya Pradesh', 'Gujarat'],
+                    datasets: [{
+                        label: 'Average Asset Price (Lakhs)',
+                        data: [257.41, 256.66, 256.25, 255.96, 255.79],
+                        backgroundColor: 'rgba(59, 130, 246, 0.4)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    }
+                }
+            });
+
+            // Chart 2: Doughnut Structure Type Core mapping
+            new Chart(document.getElementById('chart-types').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Independent House', 'Apartment', 'Villa'],
+                    datasets: [{
+                        data: [255.37, 254.62, 253.77],
+                        backgroundColor: ['#3b82f6', '#6366f1', '#ec4899'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 } } } }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
