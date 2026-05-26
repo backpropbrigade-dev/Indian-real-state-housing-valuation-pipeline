@@ -20,8 +20,7 @@ city = st.selectbox("Metropolitan City", ["Chennai", "Mumbai", "Bangalore", "New
 locality = st.text_input("Locality Zone", value="Main Downtown Hub")
 
 # 3. Your Official Live Render API Endpoint Link
-BACKEND_API_URL = "https://indian-real-state-housing-valuation-97ol.onrender.com/api/v1/predict"
-
+BACKEND_API_URL = "https://indian-real-state-housing-valuation-97ol.onrender.com/api/v1/predict/"
 if st.button("Calculate Market Valuation", type="primary"):
     # Group inputs into the strict JSON schema expected by your FastAPI backend
     payload_packet = {
