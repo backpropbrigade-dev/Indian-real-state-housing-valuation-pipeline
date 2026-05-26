@@ -43,6 +43,7 @@ def load_production_pipeline_binary():
         else:
             print("⚠️ Warning: No .joblib model binary files detected in root catalog.")
 
+@app.post("/api/v1/predict/")
 @app.post("/api/v1/predict")
 def run_live_inference(payload: RealEstateInputSchema):
     start_time = time.time()
